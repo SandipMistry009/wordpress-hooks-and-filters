@@ -89,14 +89,14 @@ add_filter( 'rest_authentication_errors', function(){
     wp_set_current_user( 1 ); // replace with the ID of a WP user with the authorization you want
 }, 101 );
 
-// wp rest api save post requets with meta data
-
-// Save post Meta
+// for each loop for repeated task
 
 global $wpdb;
 $post_types = $wpdb->get_results( "SELECT post_type FROM {$wpdb->prefix}posts GROUP BY post_type ", OBJECT );
  
 foreach ($post_types as $key => $value) {
+
+    // Save post Meta
 
    add_action("rest_insert_".$value->post_type, function (\WP_Post $post, $request, $creating) {
     $metas = $request->get_param("meta");
@@ -106,5 +106,24 @@ foreach ($post_types as $key => $value) {
         }
     }
     }, 10, 3);
-} 
+
+    // remove links from rest api json
+
+    add_filter( 'rest_prepare_'.$value->post_type, function ( $response ) {
+
+      $response->remove_link( 'collection' );
+      $response->remove_link( 'self' );
+      $response->remove_link( 'about' );
+      $response->remove_link( 'author' );
+      $response->remove_link( 'replies' );
+      $response->remove_link( 'version-history' );
+      $response->remove_link( 'https://api.w.org/featuredmedia' );
+      $response->remove_link( 'https://api.w.org/attachment' );
+      $response->remove_link( 'https://api.w.org/term' );
+      $response->remove_link( 'curies' );
+
+    return $response;
+    } );
+
+} //foreach
 ?>
