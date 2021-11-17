@@ -124,6 +124,24 @@ foreach ($post_types as $key => $value) {
 
     return $response;
     } );
+ 
+     // Filter by ACF
+
+    add_filter( 'rest_'.$value->post_type.'_query', function( $args, $request ) {
+        $select_company   = $request->get_param( 'select_company' );
+
+        if ( ! empty( $select_company ) ) {
+            $args['meta_query'] = array(
+                array(
+                    'key'     => 'select_company',
+                    'value'   => $select_company,
+                    'compare' => '=',
+                )
+            );      
+        }
+
+        return $args;
+    }, 10, 2 );
 
 } //foreach
 ?>
