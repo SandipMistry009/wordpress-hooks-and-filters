@@ -26,6 +26,30 @@ add_filter('pre_site_transient_update_core','remove_core_updates');
 add_filter('pre_site_transient_update_plugins','remove_core_updates');
 add_filter('pre_site_transient_update_themes','remove_core_updates');
 
+// Eliminate render blocking javascript
+
+function js_defer_attr( $tag ){
+  // add defer to all  scripts tags
+  return str_replace( ' src', ' defer="defer" src', $tag );
+}
+add_filter( 'script_loader_tag', 'js_defer_attr', 10 );
+
+//preloading CSS on Wordpress site
+
+function add_rel_preload($html, $handle, $href, $media) {
+if (is_admin())
+    return $html;
+
+$html = <<<EOT
+<link rel='preload' as='style' onload="this.onload=null;this.rel='stylesheet'" 
+id='$handle' href='$href' type='text/css' media='all' />
+EOT;
+
+return $html;
+}
+
+add_filter( 'style_loader_tag', 'add_rel_preload', 10, 4 );
+
 // change text
 
 function my_admin_change_text( $translated_text ) {
