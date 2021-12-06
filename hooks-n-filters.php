@@ -111,7 +111,20 @@ foreach ($post_types as $key => $value) {
 
     add_filter( 'rest_prepare_'.$value->post_type, function ( $response ) {
 
-      $response->remove_link( 'collection' );
+     // remove unwanted json fields from REST API response  
+
+      unset($response->data['date_gmt']);
+      unset($response->data['guid']);
+      unset($response->data['modified']);
+      unset($response->data['modified_gmt']);
+      unset($response->data['slug']);
+      unset($response->data['status']);
+      unset($response->data['post_type']);
+      unset($response->data['type']);
+      unset($response->data['link']);
+      unset($response->data['template']); 
+     
+     $response->remove_link( 'collection' );
       $response->remove_link( 'self' );
       $response->remove_link( 'about' );
       $response->remove_link( 'author' );
