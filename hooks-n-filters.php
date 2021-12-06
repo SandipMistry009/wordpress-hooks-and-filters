@@ -157,4 +157,45 @@ foreach ($post_types as $key => $value) {
     }, 10, 2 );
 
 } //foreach
-?>
+
+// WP REST API custom end points
+
+function wp_api_v2_all_posts ($data) {
+
+	@header( 'Access-Control-Allow-Origin: *' );
+
+   	 global $wpdb;
+     $arr = array();
+	 $args=array();
+	 $args=array('posts_per_page'=> -1,
+	 	'post_type' => 'post',
+	 	'orderby' => 'title',
+	 	'order' => 'ASC',
+	);
+
+	 $all_posts=get_posts($args);		
+	 
+
+	 //wp_send_json_success($all_posts);
+
+	 foreach ($all_posts as $value) {
+	     $data = new stdClass;
+	 	$data->id = $value->ID;
+	 	$data->date = $value->post_date;
+	 	$data->slug = $value->post_name;
+	 	$data->title = $value->post_title;
+	 	$data->content = $value->post_content;
+	 	$data->categories = get_the_category( $value->ID)[0]->cat_ID;
+        $arr[] = $data;
+	 }
+	 wp_send_json_success($arr);
+}
+
+add_action( 'rest_api_init', function () {
+
+register_rest_route( 'wp/v2', '/all_posts', array(
+        'methods' => 'GET',
+        'callback' => 'wp_api_v2_all_posts',
+    ) );
+
+});
