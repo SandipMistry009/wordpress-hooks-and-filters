@@ -1,0 +1,65 @@
+1. Change Wp-admmin url by installing plugin name : protect wp-admin [Install this plugin only on server]
+2. Generate wp-config file and do settings based on it
+3. Install plugins like wp-migarate DB to migrate site on Live server
+4. Install plugin like Back WP UP for the website Backup
+5. Hide unnecessary menu items from admin panel by custom made plugun - My-admin
+6. Hide wp-config.php and htaccess file by below code in htaccess file
+
+	6.1 Hide wp-config
+	
+		<Files wp-config.php>
+		order allow,deny
+		deny from all
+		</Files>
+		
+	6.2 Hide Htaccess file
+	
+		<Files .htaccess>
+		order allow,deny
+		deny from all
+		</Files>
+
+7. Disable Directory Browsing by Htaccess
+
+	Options -Indexes
+
+8. Disable PHP execution in Some WordPress Directory
+
+	<Files *.php>
+	deny from all
+	</Files>
+9. Setting 301 redirection throught the Htaccess
+
+	Redirect 301 /oldurl/ http://www.example.com/newurl
+	Redirect 301 /category/television/ 
+	http://www.example.com/category/tv/
+
+10. Ban Suspicious IP addresses by Htaccess
+	
+	<Limit GET POST>
+	order allow,deny
+	deny from xxx.xxx.xx.x
+	allow from all
+	</Limit>
+	
+11. Increase File Upload Size - Htaccess
+
+	php_value upload_max_filesize 64M
+	php_value post_max_size 64M
+	php_value max_execution_time 300
+	php_value max_input_time 300
+	
+12. Disable access to XML-RPC file using Htaccess [This file allow third party accessing]
+
+	# Block WordPress xmlrpc.php requests
+	<Files xmlrpc.php>
+	order deny,allow
+	deny from all
+	</Files>
+	
+13. Check Website for Security and Malware & Hacks 
+	
+	https://www.wpbeginner.com/showcase/best-wordpress-vulnerability-scanners-online/
+
+
+More Links : https://www.cloudways.com/blog/protect-wordpress-with-htaccess/	
