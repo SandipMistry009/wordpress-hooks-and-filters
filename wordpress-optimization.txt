@@ -1,0 +1,17 @@
+https://github.com/lukecav/awesome-wp-speed-up
+
+https://crunchify.com/how-to-print-all-loaded-java-scripts-and-css-stylesheets-handle-for-your-wordpress-blog/
+
+https://crunchify.com/try-to-deregister-remove-comment-reply-min-js-jquery-migrate-min-js-and-responsive-menu-js-from-wordpress-if-not-required/
+
+
+1. WP-Optimize Plugin - To Optimize Database
+2. W3 Total Cache - Caching Plugin
+3. Async JavaScript - Load Javascript Async Plugin
+4. Autoptimize - Minimize the HTML, CSS and JS code
+5. Compress the Images
+6. Enable the Gzip
+7. Reduce HTTP requests
+8. Use FREE CDN
+9. Load the required appropriate CSS on archive and single page.
+10. Try to improve the Query result
