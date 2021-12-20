@@ -134,7 +134,27 @@ foreach ($post_types as $key => $value) {
     // remove links from rest api json
 
     add_filter( 'rest_prepare_'.$value->post_type, function ( $response ) {
+	
+	    
+	// generate featured images
 
+      $featured_image_id = $response->data['featured_media'];
+
+      $images = array('original','thumbnail','medium','large');
+
+      foreach ($images as $image) {
+        
+        $featured_image = wp_get_attachment_image_src( $featured_image_id,$image); 
+        $alt_text = get_post_meta($featured_image_id, '_wp_attachment_image_alt', true);
+
+        if( $featured_image ) {
+          $response->data['featured_image'][$image] = $featured_image[0];
+          $response->data['alt_text'] = $alt_text;
+        }
+     
+      }	    
+	    
+	    
      // remove unwanted json fields from REST API response  
 
       unset($response->data['date_gmt']);
