@@ -335,3 +335,15 @@ function search_by_sku( $search, &$query_vars ) {
     
 }
     add_filter( 'posts_search', 'search_by_sku', 999, 2 );
+
+add_filter( 'woocommerce_gateway_title', 'rudr_change_payment_gateway_title', 25, 2 );
+
+function rudr_change_payment_gateway_title( $title, $gateway_id ){
+    
+
+    if( 'payubiz' === $gateway_id ) {
+        $title = 'Online Payment';
+    }
+
+    return $title;
+}
