@@ -273,3 +273,34 @@ function insert_html_in_header() {
     <?php }
 
 }
+
+// Prepaid Order Discount
+
+add_action( 'woocommerce_cart_calculate_fees','libaasqueen_add_discount', 20, 1 );
+
+function libaasqueen_add_discount( $cart_object ) {
+
+if ( is_admin() && ! defined( 'DOING_AJAX' ) ) return;
+
+// Mention the payment method e.g. cod, bacs, cheque or paypal
+$payment_method = 'payubiz';
+
+// The percentage to apply
+//$percent = 2; // 2%
+
+$cart_total = $cart_object->subtotal_ex_tax;
+
+$chosen_payment_method = WC()->session->get('chosen_payment_method'); //Get the selected payment method
+
+if( $payment_method == $chosen_payment_method ){
+
+$label_text = __( "Extra ₹100 Discount on Prepaid/UPI" );
+
+// Calculating percentage
+//$discount = number_format(($cart_total / 100) * $percent, 2);
+$discount = number_format(100, 2);
+
+// Adding the discount
+$cart_object->add_fee( $label_text, -$discount, false );
+}
+}
