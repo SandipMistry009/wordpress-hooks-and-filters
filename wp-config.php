@@ -75,14 +75,6 @@ define( 'COMPRESS_SCRIPTS',    true );
 define( 'CONCATENATE_SCRIPTS', true );
 define( 'ENFORCE_GZIP',        true );
 
-
-/* FTP */
-define( 'FTP_USER', 'admin_coolmaftp' );
-define( 'FTP_PASS', 'UDnCTTbwqx' );
-define( 'FTP_HOST', '139.59.4.150' );
-define( 'FTP_SSL', true );
-
-
 /* CRON */
 define( 'DISABLE_WP_CRON',      'false' );
 define( 'ALTERNATE_WP_CRON',    'false' );
