@@ -1,8 +1,39 @@
 <?php 
-
 @ini_set( 'upload_max_size' , '64M' );
 @ini_set( 'post_max_size', '64M');
 @ini_set( 'max_execution_time', '1000' );
+
+// Remove Main menu for shop_manager
+function remove_menus(){
+
+    global $current_user;
+    $user_roles = $current_user->roles;
+
+    if($user_roles[0] == 'shop_manager'){
+
+       remove_submenu_page( 'index.php', 'update-core.php' ); // WP updated
+      //remove_menu_page( 'edit.php' );                   //Posts
+      remove_menu_page( 'themes.php' );                 //Appearance
+      //remove_menu_page( 'edit-comments.php' );          //Comments
+      //remove_menu_page( 'upload.php' );                 //Media
+      //remove_menu_page( 'edit.php?post_type=page' );    //Pages
+      remove_menu_page( 'plugins.php' );                //Plugins
+      //remove_menu_page( 'users.php' );                //Users
+      remove_menu_page( 'tools.php' );                  //Tools
+      //remove_menu_page( 'options-general.php' );        //Settings
+      remove_menu_page('edit.php?post_type=acf-field-group'); // Advance Custom Fields
+      remove_menu_page('wpcf7'); // contact form 7
+      remove_menu_page('elementor'); // Elementor
+      remove_menu_page('wpseo_workouts'); //Yeost SEO
+      remove_menu_page( 'edit.php?post_type=elementor_library' );    //Elementor
+      remove_menu_page('edit.php?post_type=featured_item'); // flstsome portfolio
+      remove_menu_page('edit.php?post_type=blocks'); // elementor blocks
+      //remove_menu_page('itsoul_settings');
+
+    }
+
+}
+add_action( 'admin_menu', 'remove_menus',9999 );
 
 // changing default wordpres email settings
  
