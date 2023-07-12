@@ -224,3 +224,64 @@ function search_by_sku( $search, &$query_vars ) {
     
 }
 add_filter( 'posts_search', 'search_by_sku', 999, 2 );
+
+
+add_action( 'wp_enqueue_scripts', 'dequeue_woocommerce_styles_scripts', 99999 );
+
+function dequeue_woocommerce_styles_scripts() {
+    if ( function_exists( 'is_woocommerce' ) ) {
+        if ( ! is_woocommerce() && ! is_cart() && ! is_checkout() ) {
+            # Styles
+            wp_dequeue_style( 'woocommerce-general' );
+            wp_dequeue_style( 'woocommerce-layout' );
+            wp_dequeue_style( 'woocommerce-smallscreen' );
+            wp_dequeue_style( 'woocommerce_frontend_styles' );
+            wp_dequeue_style( 'woocommerce_fancybox_styles' );
+            wp_dequeue_style( 'woocommerce_chosen_styles' );
+            wp_dequeue_style( 'woocommerce_prettyPhoto_css' );
+            # Scripts
+            wp_dequeue_script( 'wc_price_slider' );
+            wp_dequeue_script( 'wc-single-product' );
+            wp_dequeue_script( 'wc-add-to-cart' );
+            wp_dequeue_script( 'wc-cart-fragments' );
+            wp_dequeue_script( 'wc-checkout' );
+            wp_dequeue_script( 'wc-add-to-cart-variation' );
+            wp_dequeue_script( 'wc-single-product' );
+            wp_dequeue_script( 'wc-cart' );
+            wp_dequeue_script( 'wc-chosen' );
+            wp_dequeue_script( 'woocommerce' );
+            wp_dequeue_script( 'prettyPhoto' );
+            wp_dequeue_script( 'prettyPhoto-init' );
+            wp_dequeue_script( 'jquery-blockui' );
+            wp_dequeue_script( 'jquery-placeholder' );
+            wp_dequeue_script( 'fancybox' );
+            wp_dequeue_script( 'jqueryui' );
+        }
+    }
+
+    // Other CSS and Js
+
+    //wp_dequeue_script( 'jquery' );
+
+}
+
+
+// Remove comment-reply.min.js from footer
+function crunchify_clean_header_hook(){
+    if ( is_front_page() ) :
+        //wp_deregister_script( 'comment-reply' );
+        wp_deregister_script('jquery-ui-button');
+        wp_deregister_script('jquery-ui-slider');
+        wp_deregister_script('jquery-ui-autocomplete');
+        wp_deregister_script('pb-table');
+        wp_deregister_script('jquery-bbq');
+        wp_deregister_script('jquery-qtip');
+        wp_deregister_script('jquery-themeOption');
+        wp_deregister_script('jquery-themeOptionElement');
+        wp_deregister_script('media-editor');
+        wp_deregister_script('media-audiovideo');
+
+    endif;        
+
+}
+add_action('init','crunchify_clean_header_hook');
