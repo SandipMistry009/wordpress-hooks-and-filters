@@ -1,4 +1,33 @@
 <?php
+if ( class_exists( 'WooCommerce' ) ) {
+    add_action( 'wp_head', 'insert_html_in_header');    
+} else {
+  return false;
+}
+
+function insert_html_in_header() {
+    
+    if ( is_single() ) { global $product;  ?>
+
+        <div style="display:none;" itemscope itemtype="http://schema.org/Product">
+            <meta itemprop="brand" content="brandname">
+            <meta itemprop="name" content="<?php echo $product->get_formatted_name(); ?>">
+            <a itemprop="url" href="<?php echo get_the_permalink(); ?>"></a>
+            <img itemprop="image" src="<?php echo wp_get_attachment_url( $product->get_image_id() ); ?>" alt="<?php echo $product->get_formatted_name(); ?>" />
+            <span itemprop="description"><?php echo $product->get_short_description(); ?></span>
+            <meta itemprop="productID" content="<?php echo get_the_ID(); ?>">
+            <meta itemprop="category" content="166" />
+            <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                <link itemprop="availability" href="http://schema.org/InStock" />
+                <meta itemprop="itemCondition" itemtype="http://schema.org/OfferItemCondition" content="http://schema.org/NewCondition" />
+                <div class="product_price" itemprop="price"><?php echo number_format($product->get_price(),2); ?></div>
+                <meta itemprop="priceCurrency" content="INR">
+            </span>
+        </div>
+    <?php }
+
+}
+
 // Remove checkout fields 
 
 add_filter( 'woocommerce_checkout_fields' , 'custom_override_checkout_fields' );
