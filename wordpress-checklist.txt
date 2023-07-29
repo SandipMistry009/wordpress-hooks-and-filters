@@ -57,7 +57,8 @@
 	deny from all
 	</Files>
 	
-13. Check Website for Security and Malware & Hacks 
+13. Check Website for Security and Malware & Hacks
+14. Disable REST API - If no needed
 	
 	https://www.wpbeginner.com/showcase/best-wordpress-vulnerability-scanners-online/
 
