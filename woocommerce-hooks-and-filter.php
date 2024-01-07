@@ -357,3 +357,13 @@ add_filter('request', function( $vars ) {
     }
     return $vars;
 });
+
+// add alt attribute to all product images
+function modify_shop_product_image ( $img, $product, $size, $attr, $placeholder ) {
+    $alt_tag = 'alt=';
+    $pos = stripos( $img, 'alt=' ) + strlen( $alt_tag ) + 1;
+    return substr_replace($img, $product->get_name(), $pos, 0);
+}
+
+add_action( 'woocommerce_product_get_image', 'modify_shop_product_image', 10, 5 );
+
