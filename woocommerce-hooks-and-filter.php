@@ -1,5 +1,5 @@
 <?php
-if ( class_exists( 'WooCommerce' ) ) {
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
     add_action( 'wp_head', 'insert_html_in_header');    
 } else {
   return false;
