@@ -348,3 +348,12 @@ function rudr_change_payment_gateway_title( $title, $gateway_id ){
 
     return $title;
 }
+
+// hide admin notices
+function hide_update_noticee_to_all_but_admin_users()
+{
+    if (is_super_admin()) {
+        remove_all_actions( 'admin_notices' );
+    }
+}
+add_action( 'admin_head', 'hide_update_noticee_to_all_but_admin_users', 1 );
