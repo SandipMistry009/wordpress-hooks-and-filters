@@ -127,3 +127,10 @@ function remove_unused_stylesheet() {
     else:
     endif;    
 }
+function add_alt_to_images_if_missing( $attr, $attachment = null ) {
+    if($attr['alt']==''){
+        $attr['alt']=trim( strip_tags( $attachment->post_title ) );
+    }
+    return $attr;
+}
+add_filter( 'wp_get_attachment_image_attributes','add_alt_to_images_if_missing', 10, 2 );
