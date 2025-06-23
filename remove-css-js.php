@@ -71,15 +71,19 @@ add_action('init','crunchify_clean_header_hook');
 
 
 
-// Remove jQuery Migrate Script from header and Load jQuery from Google API
-function crunchify_remove_jquery_migrate_load_google_hosted_jquery() {
+function replace_wp_jquery_with_google_cdn() {
     if (!is_admin()) {
+        // Remove default jQuery
         wp_deregister_script('jquery');
-        wp_register_script('jquery', 'https://code.jquery.com/jquery-3.5.1.min.js', false, null);
+
+        // Register Google CDN version of jQuery
+        wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js', false, '3.6.0', true);
+
+        // Enqueue it
         wp_enqueue_script('jquery');
     }
 }
-//add_action('init', 'crunchify_remove_jquery_migrate_load_google_hosted_jquery');
+add_action('wp_enqueue_scripts', 'replace_wp_jquery_with_google_cdn');
 
 
 function crunchify_print_scripts_styles() {
