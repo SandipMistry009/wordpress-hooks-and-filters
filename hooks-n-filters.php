@@ -377,3 +377,54 @@ function add_image_insert_override($sizes){
     return $sizes;
 }
 add_filter('intermediate_image_sizes_advanced', 'add_image_insert_override' );
+
+function delete_useless_post_meta() {
+   global $wpdb;
+   $table = $wpdb->prefix.'postmeta';
+   $wpdb->delete ($table, array('meta_key' => '_edit_last'));
+   $wpdb->delete ($table, array('meta_key' => '_edit_lock'));
+   $wpdb->delete ($table, array('meta_key' => '_wp_old_slug'));
+   
+   $wpdb->query($wpdb->prepare("DELETE FROM `wp_postmeta` WHERE `meta_key` LIKE '%_oembed_%' ORDER BY `meta_id` DESC"));
+}
+add_action('wp_logout','delete_useless_post_meta');	
+
+
+// SEO Schema Text
+
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+    add_action( 'wp_head', 'insert_html_in_header');    
+} else {
+  return false;
+}
+
+function insert_html_in_header() {
+    
+    if ( is_single() ) { global $product;  ?>
+
+        <div style="display:none;" itemscope itemtype="http://schema.org/Product">
+            <meta itemprop="brand" content="TheLibas">
+            <meta itemprop="name" content="<?php echo $product->get_formatted_name(); ?>">
+            <a itemprop="url" href="<?php echo get_the_permalink(); ?>"></a>
+            <img itemprop="image" src="<?php echo wp_get_attachment_url( $product->get_image_id() ); ?>" alt="<?php echo $product->get_formatted_name(); ?>" />
+            <span itemprop="description"><?php echo $product->get_short_description(); ?></span>
+            <meta itemprop="productID" content="<?php echo get_the_ID(); ?>">
+            <meta itemprop="category" content="" />
+            <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                <link itemprop="availability" href="http://schema.org/InStock" />
+                <meta itemprop="itemCondition" itemtype="http://schema.org/OfferItemCondition" content="http://schema.org/NewCondition" />
+                <div class="product_price" itemprop="price"><?php echo $product->get_price(); ?></div>
+                <meta itemprop="priceCurrency" content="INR">
+            </span>
+        </div>
+    <?php }
+
+}
+
+function modify_shop_product_image ( $img, $product, $size, $attr, $placeholder ) {
+    $alt_tag = 'alt=';
+    $pos = stripos( $img, 'alt=' ) + strlen( $alt_tag ) + 1;
+    return substr_replace($img, $product->get_name(), $pos, 0);
+}
+
+add_action( 'woocommerce_product_get_image', 'modify_shop_product_image', 10, 5 );
