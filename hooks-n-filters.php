@@ -389,7 +389,6 @@ function delete_useless_post_meta() {
 }
 add_action('wp_logout','delete_useless_post_meta');	
 
-
 // SEO Schema Text
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
@@ -400,7 +399,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 function insert_html_in_header() {
     
-    if ( is_single() ) { global $product;  ?>
+    if ( is_single() ) { global $product;  $cartegories = strip_tags(wc_get_product_category_list( $post->ID, $sep = ', ' )); ?>
 
         <div style="display:none;" itemscope itemtype="http://schema.org/Product">
             <meta itemprop="brand" content="TheLibas">
@@ -409,7 +408,7 @@ function insert_html_in_header() {
             <img itemprop="image" src="<?php echo wp_get_attachment_url( $product->get_image_id() ); ?>" alt="<?php echo $product->get_formatted_name(); ?>" />
             <span itemprop="description"><?php echo $product->get_short_description(); ?></span>
             <meta itemprop="productID" content="<?php echo get_the_ID(); ?>">
-            <meta itemprop="category" content="" />
+            <meta itemprop="category" content="<?php echo $cartegories; ?>" />
             <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
                 <link itemprop="availability" href="http://schema.org/InStock" />
                 <meta itemprop="itemCondition" itemtype="http://schema.org/OfferItemCondition" content="http://schema.org/NewCondition" />
@@ -421,10 +420,19 @@ function insert_html_in_header() {
 
 }
 
-function modify_shop_product_image ( $img, $product, $size, $attr, $placeholder ) {
-    $alt_tag = 'alt=';
-    $pos = stripos( $img, 'alt=' ) + strlen( $alt_tag ) + 1;
-    return substr_replace($img, $product->get_name(), $pos, 0);
-}
+// Change images alt and title tag 
+add_filter('wp_get_attachment_image_attributes', 'change_attachement_image_attributes', 20, 2);
+function change_attachement_image_attributes($attr, $attachment) {
+global $post;
+$product = wc_get_product( $post->ID );
+if ($post->post_type == 'product') {
+    $title = $post->post_title;
+    $authortags = strip_tags ($product->get_tags());
+    $cats = strip_tags(wc_get_product_category_list( $post->ID, $sep = ', ' ));
+    $editor = $product->get_attribute( 'pa_szerkesztette' );
 
-add_action( 'woocommerce_product_get_image', 'modify_shop_product_image', 10, 5 );
+    $attr['alt'] = $title .' '. $authortags .' '. $editor.' '.$cats;
+    $attr['title'] = $title .' '. $authortags .' '. $editor;
+    }
+    return $attr;
+}   
