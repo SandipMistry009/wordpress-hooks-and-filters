@@ -7,7 +7,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 function insert_html_in_header() {
     
-    if ( is_single() ) { global $product;  ?>
+    if ( is_single() ) { global $product; $cartegories = strip_tags(wc_get_product_category_list( $post->ID, $sep = ', ' )); ?>
 
         <div style="display:none;" itemscope itemtype="http://schema.org/Product">
             <meta itemprop="brand" content="brandname">
@@ -16,7 +16,7 @@ function insert_html_in_header() {
             <img itemprop="image" src="<?php echo wp_get_attachment_url( $product->get_image_id() ); ?>" alt="<?php echo $product->get_formatted_name(); ?>" />
             <span itemprop="description"><?php echo $product->get_short_description(); ?></span>
             <meta itemprop="productID" content="<?php echo get_the_ID(); ?>">
-            <meta itemprop="category" content="166" />
+            <meta itemprop="category" content="<?php echo $cartegories; ?>" />
             <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
                 <link itemprop="availability" href="http://schema.org/InStock" />
                 <meta itemprop="itemCondition" itemtype="http://schema.org/OfferItemCondition" content="http://schema.org/NewCondition" />
@@ -367,3 +367,70 @@ function modify_shop_product_image ( $img, $product, $size, $attr, $placeholder 
 
 add_action( 'woocommerce_product_get_image', 'modify_shop_product_image', 10, 5 );
 
+add_action( 'storefront_before_footer', 'storefront_before_footer_function', 10 );
+function storefront_before_footer_function(){ ?> 
+        
+    <div class="before-footer-text">
+        <h3>Top Stories:</h3>
+        <?php 
+        $categories = get_categories( array(
+        	'orderby' => 'name',
+        	'taxonomy'  => array('product_cat')
+        ) );
+        foreach ( $categories as $category ) {
+        	printf( '<a href="%1$s">%2$s</a> ',
+        		esc_url( get_category_link( $category->term_id ) ),
+        		esc_html( $category->name )
+        	);
+        }
+        ?>
+    </div>        
+<?php }
+
+// Products search by SKU
+
+function search_by_sku( $search, &$query_vars ) {
+    global $wpdb;
+    if(isset($query_vars->query['s']) && !empty($query_vars->query['s'])){
+        $args = array(
+            'posts_per_page'  => -1,
+            'post_type'       => 'product',
+            'meta_query' => array(
+                array(
+                    'key' => '_sku',
+                    'value' => $query_vars->query['s'],
+                    'compare' => 'LIKE'
+                )
+            )
+        );
+        $posts = get_posts($args);
+        if(empty($posts)) return $search;
+        $get_post_ids = array();
+        foreach($posts as $post){
+            $get_post_ids[] = $post->ID;
+        }
+        if(sizeof( $get_post_ids ) > 0 ) {
+                $search = str_replace( 'AND (((', "AND ((({$wpdb->posts}.ID IN (" . implode( ',', $get_post_ids ) . ")) OR (", $search);
+        }
+    }
+    return $search;
+    
+}
+add_filter( 'posts_search', 'search_by_sku', 999, 2 );
+
+// Change images alt and title tag 
+add_filter('wp_get_attachment_image_attributes', 'change_attachement_image_attributes', 20, 2);
+function change_attachement_image_attributes($attr, $attachment) {
+global $post;
+$product = wc_get_product( $post->ID );
+if ($post->post_type == 'product') {
+    $title = $post->post_title;
+    $authortags = strip_tags ($product->get_tags());
+    $cats = strip_tags(wc_get_product_category_list( $post->ID, $sep = ', ' ));
+    $editor = $product->get_attribute( 'pa_szerkesztette' );
+
+    $attr['alt'] = $title .' '. $authortags .' '. $editor.' '.$cats;
+    $attr['title'] = $title .' '. $authortags .' '. $editor;
+    }
+    return $attr;
+}   
