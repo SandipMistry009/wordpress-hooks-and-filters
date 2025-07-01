@@ -1,0 +1,6 @@
+// Use Robots.txt to Exclude Unnecessary Duplicates
+# Block sort/filter/query-based duplicates
+Disallow: /*?orderby=
+Disallow: /*?filter=
+Disallow: /*?utm_
+Disallow: /*?add-to-cart=
