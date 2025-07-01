@@ -28,6 +28,17 @@ function insert_html_in_header() {
 
 }
 
+// Force Canonicals Programmatically
+
+add_filter( 'wpseo_canonical', 'custom_canonical_url' );
+function custom_canonical_url( $canonical ) {
+    if ( is_product() ) {
+        global $post;
+        return get_permalink( $post->ID );
+    }
+    return $canonical;
+}
+
 // Remove checkout fields 
 
 add_filter( 'woocommerce_checkout_fields' , 'custom_override_checkout_fields' );
