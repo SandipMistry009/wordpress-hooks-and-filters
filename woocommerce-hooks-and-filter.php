@@ -445,3 +445,14 @@ if ($post->post_type == 'product') {
     }
     return $attr;
 }   
+
+function delete_useless_post_meta() {
+   global $wpdb;
+   $table = $wpdb->prefix.'postmeta';
+   $wpdb->delete ($table, array('meta_key' => '_edit_last'));
+   $wpdb->delete ($table, array('meta_key' => '_edit_lock'));
+   $wpdb->delete ($table, array('meta_key' => '_wp_old_slug'));
+   
+   $wpdb->query($wpdb->prepare("DELETE FROM `wp_postmeta` WHERE `meta_key` LIKE '%_oembed_%' ORDER BY `meta_id` DESC"));
+}
+add_action('wp_logout','delete_useless_post_meta');	
