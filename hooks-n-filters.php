@@ -3,6 +3,11 @@
 @ini_set( 'post_max_size', '64M');
 @ini_set( 'max_execution_time', '1000' );
 
+add_action('admin_init', function () {
+    remove_all_actions('admin_notices');
+    remove_all_actions('all_admin_notices');
+});
+
 // Remove Main menu for shop_manager
 function remove_menus(){
 
